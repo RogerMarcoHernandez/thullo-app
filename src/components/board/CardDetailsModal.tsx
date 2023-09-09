@@ -35,7 +35,7 @@ const card = {
 };
 
 const CardDetailsModal = () => (
-  <Modal isOpen={true}>
+  <Modal isOpen={false}>
     <ModalContent className="container mx-auto">
       <ModalHeader>
         <h1 className="text-3xl font-semibold mb-4">{card.title}</h1>
