@@ -1,10 +1,6 @@
-import Head from "next/head";
-const PrivacyPolicy = () => {
+const PrivacyPolicyPage = () => {
   return (
-    <div>
-      <Head>
-        <title>Privacy Policy - Thullo</title>
-      </Head>
+    <>
       {/* Privacy Policy content */}
       <div className="container mx-auto py-8">
         <h1 className="text-3xl font-semibold mb-4">Privacy Policy</h1>
@@ -489,8 +485,8 @@ const PrivacyPolicy = () => {
           Spain.
         </p>
       </div>
-    </div>
+    </>
   );
 };
 
-export default PrivacyPolicy;
+export default PrivacyPolicyPage;

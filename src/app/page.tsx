@@ -3,7 +3,7 @@ import Features from "@/components/Features";
 import Footer from "@/components/Footer";
 import Hero from "@/components/Hero";
 
-const Home = () => (
+const HomePage = () => (
   <main>
     <Hero />
     <Features />
@@ -12,4 +12,4 @@ const Home = () => (
   </main>
 );
 
-export default Home;
+export default HomePage;
