@@ -14,7 +14,7 @@ const Cta = () => (
           color="secondary"
           className="mx-auto"
           as={Link}
-          href="/auth/register"
+          href="/auth"
         >
           Sign Up for Free
         </Button>
