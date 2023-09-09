@@ -2,7 +2,7 @@ const PrivacyPolicyPage = () => {
   return (
     <>
       {/* Privacy Policy content */}
-      <div className="container mx-auto py-8">
+      <div className="container mx-auto py-8 px-2">
         <h1 className="text-3xl font-semibold mb-4">Privacy Policy</h1>
         <p>
           Your privacy is important to us. This Privacy Policy explains how we

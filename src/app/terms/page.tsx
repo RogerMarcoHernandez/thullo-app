@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 const TermsOfServicePage = () => (
-  <div className="container mx-auto py-8 flex flex-col gap-4 [&_h2]:text-xl">
+  <div className="container mx-auto py-8 flex flex-col gap-4 [&_h2]:text-xl px-2">
     <h1 className="text-3xl font-semibold mb-4">Terms and Conditions of Use</h1>
 
     <h2>1. Terms</h2>
