@@ -1,5 +1,4 @@
-"use client";
-import { Button } from "@nextui-org/react";
+import { Button } from "@nextui-org/button";
 
 const Hero = () => (
   <section className="bg-cover bg-center h-screen flex items-center">

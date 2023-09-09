@@ -1,6 +1,5 @@
-"use client";
-
-import { Button } from "@nextui-org/react";
+import { Button } from "@nextui-org/button";
+import Link from "next/link";
 
 const Cta = () => (
   <section className="bg-primary py-12 text-center">
@@ -10,7 +9,13 @@ const Cta = () => (
         Join thousands of users who are already enjoying the benefits of Thullo.
       </p>
       <div>
-        <Button size="lg" color="secondary" className="mx-auto">
+        <Button
+          size="lg"
+          color="secondary"
+          className="mx-auto"
+          as={Link}
+          href="/auth/register"
+        >
           Sign Up for Free
         </Button>
       </div>

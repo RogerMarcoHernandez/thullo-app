@@ -1,8 +1,6 @@
-"use client";
-
-import { Link } from "@nextui-org/react";
+import { Link } from "@nextui-org/link";
 import Image from "next/image";
-import { default as NextLink } from "next/link";
+import NextLink from "next/link";
 import { FaGithub } from "react-icons/fa";
 
 const Footer = () => (
