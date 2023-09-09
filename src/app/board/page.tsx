@@ -1,3 +1,4 @@
+import CardDetailsModal from "@/components/board/CardDetailsModal";
 import List from "@/components/board/List";
 import { Button } from "@nextui-org/button";
 import { Link } from "@nextui-org/link";
@@ -55,6 +56,7 @@ const BoardPage = () => (
       {lists.map((list) => (
         <List key={list.id} {...list} />
       ))}
+      <CardDetailsModal />
     </div>
   </div>
 );
