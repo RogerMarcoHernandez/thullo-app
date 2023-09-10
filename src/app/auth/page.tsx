@@ -1,15 +1,11 @@
 "use client";
 import GithubButton from "@/components/auth/GithubButton";
+import { Button } from "@nextui-org/button";
 import { Image } from "@nextui-org/image";
-import { useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import NextImage from "next/image";
-import { redirect } from "next/navigation";
 
 const AuthPage = () => {
-  const { data: session } = useSession();
-  if (session) {
-    redirect("/dashboard");
-  }
   return (
     <div className="bg-gradient-to-br from-blue-200 to-cyan-200 flex flex-col items-center justify-center px-2 gap-8 h-screen">
       <Image
@@ -21,6 +17,9 @@ const AuthPage = () => {
       />
       <div className="flex flex-col justify-center items-center">
         <GithubButton />
+        <Button color="danger" className="mt-4" onClick={() => signOut()}>
+          Log out
+        </Button>
       </div>
     </div>
   );
