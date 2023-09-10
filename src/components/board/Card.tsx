@@ -1,3 +1,4 @@
+import { dateToString } from "@/lib/date";
 import { Avatar } from "@nextui-org/avatar";
 import { Button } from "@nextui-org/button";
 import {
@@ -7,14 +8,9 @@ import {
   Card as NUICard,
 } from "@nextui-org/card";
 import { Chip } from "@nextui-org/chip";
+import { Card } from "@prisma/client";
 
-type CardProps = {
-  title: string;
-  dueDate?: string;
-  labels: string[];
-};
-
-const Card = ({ title, dueDate, labels }: CardProps) => (
+const Card = ({ title, dueDate, labels }: Card) => (
   <NUICard className="bg-foreground text-background rounded shadow mb-2 p-2 flex flex-col gap-2 group/card">
     <CardHeader className="flex justify-between">
       <h3>{title}</h3>
@@ -36,7 +32,7 @@ const Card = ({ title, dueDate, labels }: CardProps) => (
     <CardFooter className="flex justify-between">
       {dueDate && (
         <Chip color="warning" className="self-start">
-          {dueDate}
+          {dateToString(dueDate)}
         </Chip>
       )}
       <Avatar
