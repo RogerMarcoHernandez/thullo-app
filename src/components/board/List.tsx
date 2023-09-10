@@ -19,7 +19,7 @@ type ListWithCards = Prisma.ListGetPayload<{
   };
 }>;
 
-type Props = ListWithCards & {
+export type Props = ListWithCards & {
   deleteList: (listId: string) => Promise<void>;
   editList: (listId: string, name: string) => Promise<void>;
   isBoardCreator: boolean;
@@ -66,6 +66,14 @@ const List = ({
   deleteComment,
   ...list
 }: Props) => {
+  const cardProps = {
+    editCard,
+    deleteCard,
+    isBoardCreator,
+    createComment,
+    editComment,
+    deleteComment,
+  };
   const [{ isOver, canDrop }, drop] = useDrop(
     () => ({
       accept: "CARD" as const,
@@ -105,12 +113,7 @@ const List = ({
             <Card
               key={`list-card:${list.id}-${card.title}-${card.id}`}
               {...card}
-              isBoardCreator={isBoardCreator}
-              editCard={editCard}
-              deleteCard={deleteCard}
-              createComment={createComment}
-              editComment={editComment}
-              deleteComment={deleteComment}
+              {...cardProps}
             />
           ))}
         </CardBody>

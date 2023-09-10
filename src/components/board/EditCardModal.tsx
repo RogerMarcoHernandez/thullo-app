@@ -13,14 +13,9 @@ import { useSession } from "next-auth/react";
 import { useCallback, useRef, useState } from "react";
 import { FaComment, FaPen, FaSave } from "react-icons/fa";
 import { FaDeleteLeft } from "react-icons/fa6";
+import { Props as ListProps } from "./List";
 
 type Props = {
-  editCard: (
-    listId: string,
-    cardId: string,
-    Card: Prisma.CardUpdateInput
-  ) => Promise<void>;
-  isBoardCreator: boolean;
   card: Prisma.CardGetPayload<{
     include: {
       comments: {
@@ -29,23 +24,14 @@ type Props = {
       members: true;
     };
   }>;
-  createComment: (
-    listId: string,
-    cardId: string,
-    text: string
-  ) => Promise<void>;
-  editComment: (
-    listId: string,
-    cardId: string,
-    commentId: string,
-    text: string
-  ) => Promise<void>;
-  deleteComment: (
-    listId: string,
-    cardId: string,
-    commentId: string
-  ) => Promise<void>;
-};
+} & Pick<
+  ListProps,
+  | "createComment"
+  | "deleteComment"
+  | "editComment"
+  | "editCard"
+  | "isBoardCreator"
+>;
 
 const EditCardModal = ({
   editCard,

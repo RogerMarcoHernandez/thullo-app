@@ -310,6 +310,19 @@ const BoardPage = () => {
     [id]
   );
 
+  const listProps = {
+    deleteList,
+    editList,
+    editCard,
+    deleteCard,
+    createCard,
+    onDrop: switchCardFromListToList,
+    isBoardCreator: isBoardCreator ?? false,
+    createComment,
+    editComment,
+    deleteComment,
+  };
+
   return (
     <div className="container mx-auto p-2 pt-8">
       <h1 className="text-3xl font-semibold mb-4">{boardData?.name}</h1>
@@ -327,16 +340,7 @@ const BoardPage = () => {
             <List
               key={`list-${list.boardId}:${list.id}`}
               {...list}
-              deleteList={deleteList}
-              editList={editList}
-              editCard={editCard}
-              deleteCard={deleteCard}
-              createCard={createCard}
-              onDrop={switchCardFromListToList}
-              isBoardCreator={isBoardCreator || false}
-              createComment={createComment}
-              editComment={editComment}
-              deleteComment={deleteComment}
+              {...listProps}
             />
           ))}
         </div>

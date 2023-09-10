@@ -11,6 +11,7 @@ import { Chip } from "@nextui-org/chip";
 import { Prisma } from "@prisma/client";
 import { useDrag } from "react-dnd";
 import EditCardModal from "./EditCardModal";
+import { Props as ListProps } from "./List";
 
 type Props = Prisma.CardGetPayload<{
   include: {
@@ -19,31 +20,16 @@ type Props = Prisma.CardGetPayload<{
     };
     members: true;
   };
-}> & {
-  editCard: (
-    listId: string,
-    cardId: string,
-    Card: Prisma.CardUpdateInput
-  ) => Promise<void>;
-  deleteCard: (listId: string, cardId: string) => Promise<void>;
-  isBoardCreator: boolean;
-  createComment: (
-    listId: string,
-    cardId: string,
-    text: string
-  ) => Promise<void>;
-  editComment: (
-    listId: string,
-    cardId: string,
-    commentId: string,
-    text: string
-  ) => Promise<void>;
-  deleteComment: (
-    listId: string,
-    cardId: string,
-    commentId: string
-  ) => Promise<void>;
-};
+}> &
+  Pick<
+    ListProps,
+    | "createComment"
+    | "deleteComment"
+    | "editComment"
+    | "editCard"
+    | "deleteCard"
+    | "isBoardCreator"
+  >;
 
 const Card = ({
   editCard,
@@ -54,6 +40,13 @@ const Card = ({
   deleteComment,
   ...card
 }: Props) => {
+  const cardProps = {
+    editCard,
+    createComment,
+    editComment,
+    deleteComment,
+    isBoardCreator,
+  };
   const [{ isDragging }, drag] = useDrag(() => ({
     type: "CARD" as const,
     item: { id: card.id, listId: card.listId },
@@ -72,14 +65,7 @@ const Card = ({
       <CardHeader className="flex justify-between">
         <div className="flex gap-2">
           <h3 className="font-semibold">{card.title}</h3>
-          <EditCardModal
-            card={card}
-            editCard={editCard}
-            isBoardCreator={isBoardCreator}
-            createComment={createComment}
-            editComment={editComment}
-            deleteComment={deleteComment}
-          />
+          <EditCardModal card={card} {...cardProps} />
         </div>
         {isBoardCreator && (
           <Button
