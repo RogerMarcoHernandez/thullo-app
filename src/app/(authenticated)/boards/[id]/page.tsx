@@ -8,6 +8,8 @@ import { useSession } from "next-auth/react";
 import NextLink from "next/link";
 import { useParams } from "next/navigation";
 import { useCallback, useMemo } from "react";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 import useSWR, { mutate } from "swr";
 
 type BoardWithListsAndMembers = Prisma.BoardGetPayload<{
@@ -182,6 +184,34 @@ const BoardPage = () => {
     [id]
   );
 
+  const switchCardFromListToList = useCallback(
+    async (cardId: string, oldListId: string, newListId: string) => {
+      try {
+        const response = await fetch(
+          `/api/boards/${id}/lists/${oldListId}/cards/${cardId}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ listId: newListId }),
+          }
+        );
+
+        if (response.ok) {
+          console.log("Card switched successfully");
+          // Trigger a revalidation of the data
+          mutate(`/api/boards/${id}`);
+        } else {
+          console.error("Failed to switch card");
+        }
+      } catch (error) {
+        console.error("Error switching card:", error);
+      }
+    },
+    [id]
+  );
+
   return (
     <div className="container mx-auto p-2 pt-8">
       <h1 className="text-3xl font-semibold mb-4">{boardData?.name}</h1>
@@ -193,20 +223,23 @@ const BoardPage = () => {
       <div className="flex space-x-4 mt-6">
         {boardData && <AddListModal createList={createList} />}
       </div>
-      <div className="flex flex-col md:flex-row md:flex-wrap gap-8 mt-4 w-full">
-        {boardData?.lists?.map((list) => (
-          <List
-            key={`list-${list.boardId}:${list.id}`}
-            {...list}
-            deleteList={deleteList}
-            editList={editList}
-            editCard={editCard}
-            deleteCard={deleteCard}
-            createCard={createCard}
-            isBoardCreator={isBoardCreator || false}
-          />
-        ))}
-      </div>
+      <DndProvider backend={HTML5Backend}>
+        <div className="flex flex-col md:flex-row md:flex-wrap gap-8 mt-4 w-full">
+          {boardData?.lists?.map((list) => (
+            <List
+              key={`list-${list.boardId}:${list.id}`}
+              {...list}
+              deleteList={deleteList}
+              editList={editList}
+              editCard={editCard}
+              deleteCard={deleteCard}
+              createCard={createCard}
+              onDrop={switchCardFromListToList}
+              isBoardCreator={isBoardCreator || false}
+            />
+          ))}
+        </div>
+      </DndProvider>
     </div>
   );
 };
