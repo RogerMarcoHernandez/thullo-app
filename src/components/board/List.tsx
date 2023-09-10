@@ -2,6 +2,7 @@ import Card from "@/components/board/Card";
 import { Button } from "@nextui-org/button";
 import { CardBody, CardHeader, Card as NUICard } from "@nextui-org/card";
 import { Prisma } from "@prisma/client";
+import AddCardModal from "./AddCardModal";
 import EditListModal from "./EditListModal";
 
 type ListWithCards = Prisma.ListGetPayload<{
@@ -12,9 +13,20 @@ type Props = ListWithCards & {
   deleteList: (listId: string) => Promise<void>;
   editList: (listId: string, name: string) => Promise<void>;
   isBoardCreator: boolean;
+  editCard: (listId: string, cardId: string, title: string) => Promise<void>;
+  deleteCard: (listId: string, cardId: string) => Promise<void>;
+  createCard: (listId: string, title: string) => Promise<void>;
 };
 
-const List = ({ deleteList, editList, isBoardCreator, ...list }: Props) => (
+const List = ({
+  deleteList,
+  editList,
+  editCard,
+  deleteCard,
+  createCard,
+  isBoardCreator,
+  ...list
+}: Props) => (
   <div className="flex flex-col gap-2 grow">
     <NUICard>
       <CardHeader className="flex justify-between">
@@ -32,13 +44,21 @@ const List = ({ deleteList, editList, isBoardCreator, ...list }: Props) => (
       </CardHeader>
       <CardBody>
         {list.cards?.map((card, index) => (
-          <Card key={`${list.id}-${card.title}-${index}`} {...card} />
+          <Card
+            key={`list-card:${list.id}-${card.title}-${card.id}`}
+            {...card}
+            isBoardCreator={isBoardCreator}
+            editCard={editCard}
+            deleteCard={deleteCard}
+          />
         ))}
       </CardBody>
     </NUICard>
-    <Button color="success" size="sm">
-      Add Card
-    </Button>
+    <AddCardModal
+      createCard={createCard}
+      isBoardCreator={isBoardCreator}
+      listId={list.id}
+    />
   </div>
 );
 

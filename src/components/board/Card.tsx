@@ -9,19 +9,35 @@ import {
 } from "@nextui-org/card";
 import { Chip } from "@nextui-org/chip";
 import { Card } from "@prisma/client";
+import EditCardModal from "./EditCardModal";
 
-const Card = ({ title, dueDate, labels }: Card) => (
-  <NUICard className="bg-foreground text-background rounded shadow mb-2 p-2 flex flex-col gap-2 group/card">
+type Props = Card & {
+  editCard: (listId: string, cardId: string, title: string) => Promise<void>;
+  deleteCard: (listId: string, cardId: string) => Promise<void>;
+  isBoardCreator: boolean;
+};
+
+const Card = ({ editCard, deleteCard, isBoardCreator, ...card }: Props) => (
+  <NUICard className="bg-foreground text-background rounded shadow mb-2 p-2 flex flex-col">
     <CardHeader className="flex justify-between">
-      <h3>{title}</h3>
-      <Button color="danger" className="group-hover/card:visible invisible">
-        Delete card
-      </Button>
+      <div className="flex gap-2">
+        <h3 className="font-semibold">{card.title}</h3>
+        <EditCardModal
+          card={card}
+          editCard={editCard}
+          isBoardCreator={isBoardCreator}
+        />
+      </div>
+      {isBoardCreator && (
+        <Button color="danger" onClick={() => deleteCard(card.listId, card.id)}>
+          Delete card
+        </Button>
+      )}
     </CardHeader>
     <CardBody className="flex flex-row flex-wrap gap-1">
-      {labels.map((label, labelIndex) => (
+      {card.labels.map((label, labelIndex) => (
         <Chip
-          key={labelIndex}
+          key={`card-labels-${card.id}-${label}-${labelIndex}`}
           color="primary"
           className="text-ellipsis overflow-hidden whitespace-nowrap px-1"
         >
@@ -30,9 +46,9 @@ const Card = ({ title, dueDate, labels }: Card) => (
       ))}
     </CardBody>
     <CardFooter className="flex justify-between">
-      {dueDate && (
+      {card.dueDate && (
         <Chip color="warning" className="self-start">
-          {dateToString(dueDate)}
+          {dateToString(card.dueDate)}
         </Chip>
       )}
       <Avatar

@@ -1,6 +1,5 @@
 "use client";
 import AddListModal from "@/components/board/AddListModal";
-import CardDetailsModal from "@/components/board/CardDetailsModal";
 import List from "@/components/board/List";
 import { fetcher } from "@/lib/swr";
 import { Link } from "@nextui-org/link";
@@ -103,6 +102,86 @@ const BoardPage = () => {
     [boardData, session]
   );
 
+  const editCard = useCallback(
+    async (listId: string, cardId: string, title: string) => {
+      try {
+        const response = await fetch(
+          `/api/boards/${id}/lists/${listId}/cards/${cardId}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ title }),
+          }
+        );
+
+        if (response.ok) {
+          console.log("Card edited successfully");
+          // Trigger a revalidation of the data
+          mutate(`/api/boards/${id}`);
+        } else {
+          console.error("Failed to edit card");
+        }
+      } catch (error) {
+        console.error("Error editing card:", error);
+      }
+    },
+    [id]
+  );
+
+  const deleteCard = useCallback(
+    async (listId: string, cardId: string) => {
+      try {
+        const response = await fetch(
+          `/api/boards/${id}/lists/${listId}/cards/${cardId}`,
+          {
+            method: "DELETE",
+          }
+        );
+
+        if (response.ok) {
+          console.log("Card deleted successfully");
+          // Trigger a revalidation of the data
+          mutate(`/api/boards/${id}`);
+        } else {
+          console.error("Failed to delete card");
+        }
+      } catch (error) {
+        console.error("Error deleting card:", error);
+      }
+    },
+    [id]
+  );
+
+  const createCard = useCallback(
+    async (listId: string, title: string) => {
+      try {
+        const response = await fetch(
+          `/api/boards/${id}/lists/${listId}/cards`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ title }),
+          }
+        );
+
+        if (response.ok) {
+          console.log("Card created successfully");
+          // Trigger a revalidation of the data
+          mutate(`/api/boards/${id}`);
+        } else {
+          console.error("Failed to create card");
+        }
+      } catch (error) {
+        console.error("Error creating card:", error);
+      }
+    },
+    [id]
+  );
+
   return (
     <div className="container mx-auto p-2 pt-8">
       <h1 className="text-3xl font-semibold mb-4">{boardData?.name}</h1>
@@ -117,14 +196,16 @@ const BoardPage = () => {
       <div className="flex flex-col md:flex-row md:flex-wrap gap-8 mt-4 w-full">
         {boardData?.lists?.map((list) => (
           <List
-            key={list.id}
+            key={`list-${list.boardId}:${list.id}`}
             {...list}
             deleteList={deleteList}
             editList={editList}
+            editCard={editCard}
+            deleteCard={deleteCard}
+            createCard={createCard}
             isBoardCreator={isBoardCreator || false}
           />
         ))}
-        <CardDetailsModal />
       </div>
     </div>
   );
