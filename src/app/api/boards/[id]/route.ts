@@ -17,6 +17,14 @@ const handler = async (
     case "GET": {
       const boards = await prisma.board.findUnique({
         where: { id: params.id, userId: session.user.id },
+        include: {
+          lists: {
+            include: {
+              cards: true,
+            },
+          },
+          members: true,
+        },
       });
       return NextResponse.json(boards);
     }
