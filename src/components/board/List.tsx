@@ -7,16 +7,45 @@ import AddCardModal from "./AddCardModal";
 import EditListModal from "./EditListModal";
 
 type ListWithCards = Prisma.ListGetPayload<{
-  include: { cards: true };
+  include: {
+    cards: {
+      include: {
+        comments: {
+          include: { user: true };
+        };
+        members: true;
+      };
+    };
+  };
 }>;
 
 type Props = ListWithCards & {
   deleteList: (listId: string) => Promise<void>;
   editList: (listId: string, name: string) => Promise<void>;
   isBoardCreator: boolean;
-  editCard: (listId: string, cardId: string, title: string) => Promise<void>;
+  editCard: (
+    listId: string,
+    cardId: string,
+    Card: Prisma.CardUpdateInput
+  ) => Promise<void>;
   deleteCard: (listId: string, cardId: string) => Promise<void>;
   createCard: (listId: string, title: string) => Promise<void>;
+  createComment: (
+    listId: string,
+    cardId: string,
+    text: string
+  ) => Promise<void>;
+  editComment: (
+    listId: string,
+    cardId: string,
+    commentId: string,
+    text: string
+  ) => Promise<void>;
+  deleteComment: (
+    listId: string,
+    cardId: string,
+    commentId: string
+  ) => Promise<void>;
   onDrop: (
     cardId: string,
     oldListId: string,
@@ -32,7 +61,9 @@ const List = ({
   createCard,
   onDrop,
   isBoardCreator,
-
+  createComment,
+  editComment,
+  deleteComment,
   ...list
 }: Props) => {
   const [{ isOver, canDrop }, drop] = useDrop(
@@ -77,6 +108,9 @@ const List = ({
               isBoardCreator={isBoardCreator}
               editCard={editCard}
               deleteCard={deleteCard}
+              createComment={createComment}
+              editComment={editComment}
+              deleteComment={deleteComment}
             />
           ))}
         </CardBody>

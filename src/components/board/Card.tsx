@@ -8,17 +8,52 @@ import {
   Card as NUICard,
 } from "@nextui-org/card";
 import { Chip } from "@nextui-org/chip";
-import { Card } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { useDrag } from "react-dnd";
 import EditCardModal from "./EditCardModal";
 
-type Props = Card & {
-  editCard: (listId: string, cardId: string, title: string) => Promise<void>;
+type Props = Prisma.CardGetPayload<{
+  include: {
+    comments: {
+      include: { user: true };
+    };
+    members: true;
+  };
+}> & {
+  editCard: (
+    listId: string,
+    cardId: string,
+    Card: Prisma.CardUpdateInput
+  ) => Promise<void>;
   deleteCard: (listId: string, cardId: string) => Promise<void>;
   isBoardCreator: boolean;
+  createComment: (
+    listId: string,
+    cardId: string,
+    text: string
+  ) => Promise<void>;
+  editComment: (
+    listId: string,
+    cardId: string,
+    commentId: string,
+    text: string
+  ) => Promise<void>;
+  deleteComment: (
+    listId: string,
+    cardId: string,
+    commentId: string
+  ) => Promise<void>;
 };
 
-const Card = ({ editCard, deleteCard, isBoardCreator, ...card }: Props) => {
+const Card = ({
+  editCard,
+  deleteCard,
+  isBoardCreator,
+  createComment,
+  editComment,
+  deleteComment,
+  ...card
+}: Props) => {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: "CARD" as const,
     item: { id: card.id, listId: card.listId },
@@ -32,6 +67,7 @@ const Card = ({ editCard, deleteCard, isBoardCreator, ...card }: Props) => {
     <NUICard
       className="bg-foreground text-background rounded shadow mb-2 p-2 flex flex-col"
       ref={drag}
+      style={{ opacity: isDragging ? 0.5 : 1 }}
     >
       <CardHeader className="flex justify-between">
         <div className="flex gap-2">
@@ -40,6 +76,9 @@ const Card = ({ editCard, deleteCard, isBoardCreator, ...card }: Props) => {
             card={card}
             editCard={editCard}
             isBoardCreator={isBoardCreator}
+            createComment={createComment}
+            editComment={editComment}
+            deleteComment={deleteComment}
           />
         </div>
         {isBoardCreator && (

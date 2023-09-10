@@ -25,14 +25,14 @@ const handler = async (
       return NextResponse.json(card);
     }
     case "PUT": {
-      const { title, listId } = await req.json();
+      const { title, description, listId } = await req.json();
       const card = await prisma.card.update({
         where: {
           id: params.card_id,
           boardId: params.id,
           listId: params.list_id,
         },
-        data: listId ? { listId } : { title },
+        data: listId ? { listId } : { title, description },
       });
       return NextResponse.json(card);
     }

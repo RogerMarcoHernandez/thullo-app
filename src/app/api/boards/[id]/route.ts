@@ -20,7 +20,16 @@ const handler = async (
         include: {
           lists: {
             include: {
-              cards: true,
+              cards: {
+                include: {
+                  comments: {
+                    include: {
+                      user: true,
+                    },
+                  },
+                  members: true,
+                },
+              },
             },
           },
           members: true,
