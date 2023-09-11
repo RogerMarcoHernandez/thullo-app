@@ -29,6 +29,8 @@ type Props = Prisma.CardGetPayload<{
     | "editCard"
     | "deleteCard"
     | "isBoardCreator"
+    | "uploadCardFiles"
+    | "deleteCardFiles"
   >;
 
 const Card = ({
@@ -38,6 +40,8 @@ const Card = ({
   createComment,
   editComment,
   deleteComment,
+  uploadCardFiles,
+  deleteCardFiles,
   ...card
 }: Props) => {
   const cardProps = {
@@ -46,6 +50,8 @@ const Card = ({
     editComment,
     deleteComment,
     isBoardCreator,
+    uploadCardFiles,
+    deleteCardFiles,
   };
   const [{ isDragging }, drag] = useDrag(() => ({
     type: "CARD" as const,

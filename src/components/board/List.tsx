@@ -51,6 +51,16 @@ export type Props = ListWithCards & {
     oldListId: string,
     newListId: string
   ) => Promise<void>;
+  uploadCardFiles: (
+    listId: string,
+    cardId: string,
+    files: FileList
+  ) => Promise<void>;
+  deleteCardFiles: (
+    listId: string,
+    cardId: string,
+    attachments: string[]
+  ) => Promise<void>;
 };
 
 const List = ({
@@ -64,6 +74,8 @@ const List = ({
   createComment,
   editComment,
   deleteComment,
+  uploadCardFiles,
+  deleteCardFiles,
   ...list
 }: Props) => {
   const cardProps = {
@@ -73,6 +85,8 @@ const List = ({
     createComment,
     editComment,
     deleteComment,
+    uploadCardFiles,
+    deleteCardFiles,
   };
   const [{ isOver, canDrop }, drop] = useDrop(
     () => ({

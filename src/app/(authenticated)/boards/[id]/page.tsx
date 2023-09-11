@@ -310,6 +310,63 @@ const BoardPage = () => {
     [id]
   );
 
+  const uploadCardFiles = useCallback(
+    async (listId: string, cardId: string, files: FileList) => {
+      try {
+        const formData = new FormData();
+        for (let i = 0; i < files.length; i++) {
+          formData.append("files", files[i]);
+        }
+        const response = await fetch(
+          `/api/boards/${id}/lists/${listId}/cards/${cardId}/attachments`,
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+
+        if (response.ok) {
+          console.log("Files uploaded successfully");
+          // Trigger a revalidation of the data
+          mutate(`/api/boards/${id}`);
+        } else {
+          console.error("Failed to upload files");
+        }
+      } catch (error) {
+        console.error("Error uploading files:", error);
+      }
+    },
+    [id]
+  );
+
+  const deleteCardFiles = useCallback(
+    async (listId: string, cardId: string, attachments: string[]) => {
+      try {
+        const response = await fetch(
+          `/api/boards/${id}/lists/${listId}/cards/${cardId}/attachments`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ attachments }),
+          }
+        );
+
+        if (response.ok) {
+          console.log("Files deleted successfully");
+          // Trigger a revalidation of the data
+          mutate(`/api/boards/${id}`);
+        } else {
+          console.error("Failed to delete files");
+        }
+      } catch (error) {
+        console.error("Error deleting files:", error);
+      }
+    },
+    [id]
+  );
+
   const listProps = {
     deleteList,
     editList,
@@ -321,6 +378,8 @@ const BoardPage = () => {
     createComment,
     editComment,
     deleteComment,
+    uploadCardFiles,
+    deleteCardFiles,
   };
 
   return (
