@@ -122,7 +122,7 @@ const BoardPage = () => {
     async (
       listId: string,
       cardId: string,
-      { title, description }: Prisma.CardUpdateInput
+      { title, description, labels }: Prisma.CardUpdateInput
     ) => {
       try {
         const response = await fetch(
@@ -132,7 +132,7 @@ const BoardPage = () => {
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ title, description }),
+            body: JSON.stringify({ title, description, labels }),
           }
         );
 

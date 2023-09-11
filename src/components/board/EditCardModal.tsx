@@ -8,6 +8,7 @@ import {
   ModalFooter,
   ModalHeader,
 } from "@nextui-org/modal";
+import { Select, SelectItem } from "@nextui-org/select";
 import { Prisma } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { useCallback, useRef, useState } from "react";
@@ -54,6 +55,9 @@ const EditCardModal = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLInputElement>(null);
   const commentRef = useRef<HTMLInputElement>(null);
+  const labelsSelectRef = useRef<HTMLSelectElement>(null);
+  const newLabelInputRef = useRef<HTMLInputElement>(null);
+  const [labels, setLabels] = useState<string[]>(card.labels);
   const editingCommentRef = useRef<HTMLInputElement>(null);
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
 
@@ -64,13 +68,20 @@ const EditCardModal = ({
     if (
       !inputRef.current ||
       !inputRef.current.value ||
-      !textareaRef ||
-      !textareaRef.current
+      !textareaRef.current ||
+      !textareaRef.current.value ||
+      !labelsSelectRef.current ||
+      !labelsSelectRef.current.value
     )
       return;
+    console.log(
+      "labels",
+      labelsSelectRef.current.value.split(",").filter(Boolean)
+    );
     editCard(card.listId, card.id, {
       title: inputRef.current.value,
       description: textareaRef.current.value,
+      labels: labelsSelectRef.current.value.split(",").filter(Boolean),
     }).then(() => {
       closeModal();
     });
@@ -126,6 +137,37 @@ const EditCardModal = ({
               placeholder="Description"
               defaultValue={card.description || ""}
             />
+            <Input
+              type="text"
+              placeholder="New label name"
+              ref={newLabelInputRef}
+              endContent={
+                <Button
+                  onClick={() => {
+                    if (!newLabelInputRef.current?.value) return;
+                    setLabels([...labels, newLabelInputRef.current.value]);
+                    newLabelInputRef.current.value = "";
+                  }}
+                  color="primary"
+                  isIconOnly
+                  size="sm"
+                >
+                  <FaSave />
+                </Button>
+              }
+            />
+            <Select
+              ref={labelsSelectRef}
+              selectionMode="multiple"
+              defaultSelectedKeys={card.labels ?? []}
+              placeholder="Select labels"
+            >
+              {labels.map((label, index) => (
+                <SelectItem key={label} value={label}>
+                  {label}
+                </SelectItem>
+              ))}
+            </Select>
             <ul className="overflow-auto">
               {card.comments.map((comment, index) => (
                 <li key={index} className="mb-2">
