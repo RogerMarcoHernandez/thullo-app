@@ -1,6 +1,5 @@
 "use client";
 import AddListModal from "@/components/board/AddListModal";
-import CardDetailsModal from "@/components/board/CardDetailsModal";
 import List from "@/components/board/List";
 import { fetcher } from "@/lib/swr";
 import { Link } from "@nextui-org/link";
@@ -9,10 +8,26 @@ import { useSession } from "next-auth/react";
 import NextLink from "next/link";
 import { useParams } from "next/navigation";
 import { useCallback, useMemo } from "react";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 import useSWR, { mutate } from "swr";
 
 type BoardWithListsAndMembers = Prisma.BoardGetPayload<{
-  include: { lists: { include: { cards: true } }; members: true };
+  include: {
+    lists: {
+      include: {
+        cards: {
+          include: {
+            comments: {
+              include: { user: true };
+            };
+            members: true;
+          };
+        };
+      };
+    };
+    members: true;
+  };
 }>;
 
 const BoardPage = () => {
@@ -103,6 +118,270 @@ const BoardPage = () => {
     [boardData, session]
   );
 
+  const editCard = useCallback(
+    async (
+      listId: string,
+      cardId: string,
+      { title, description, labels }: Prisma.CardUpdateInput
+    ) => {
+      try {
+        const response = await fetch(
+          `/api/boards/${id}/lists/${listId}/cards/${cardId}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ title, description, labels }),
+          }
+        );
+
+        if (response.ok) {
+          console.log("Card edited successfully");
+          // Trigger a revalidation of the data
+          mutate(`/api/boards/${id}`);
+        } else {
+          console.error("Failed to edit card");
+        }
+      } catch (error) {
+        console.error("Error editing card:", error);
+      }
+    },
+    [id]
+  );
+
+  const deleteCard = useCallback(
+    async (listId: string, cardId: string) => {
+      try {
+        const response = await fetch(
+          `/api/boards/${id}/lists/${listId}/cards/${cardId}`,
+          {
+            method: "DELETE",
+          }
+        );
+
+        if (response.ok) {
+          console.log("Card deleted successfully");
+          // Trigger a revalidation of the data
+          mutate(`/api/boards/${id}`);
+        } else {
+          console.error("Failed to delete card");
+        }
+      } catch (error) {
+        console.error("Error deleting card:", error);
+      }
+    },
+    [id]
+  );
+
+  const createCard = useCallback(
+    async (listId: string, title: string) => {
+      try {
+        const response = await fetch(
+          `/api/boards/${id}/lists/${listId}/cards`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ title }),
+          }
+        );
+
+        if (response.ok) {
+          console.log("Card created successfully");
+          // Trigger a revalidation of the data
+          mutate(`/api/boards/${id}`);
+        } else {
+          console.error("Failed to create card");
+        }
+      } catch (error) {
+        console.error("Error creating card:", error);
+      }
+    },
+    [id]
+  );
+
+  const switchCardFromListToList = useCallback(
+    async (cardId: string, oldListId: string, newListId: string) => {
+      try {
+        const response = await fetch(
+          `/api/boards/${id}/lists/${oldListId}/cards/${cardId}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ listId: newListId }),
+          }
+        );
+
+        if (response.ok) {
+          console.log("Card switched successfully");
+          // Trigger a revalidation of the data
+          mutate(`/api/boards/${id}`);
+        } else {
+          console.error("Failed to switch card");
+        }
+      } catch (error) {
+        console.error("Error switching card:", error);
+      }
+    },
+    [id]
+  );
+
+  const createComment = useCallback(
+    async (listId: string, cardId: string, text: string) => {
+      try {
+        const response = await fetch(
+          `/api/boards/${id}/lists/${listId}/cards/${cardId}/comments`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ text }),
+          }
+        );
+
+        if (response.ok) {
+          console.log("Comment created successfully");
+          // Trigger a revalidation of the data
+          mutate(`/api/boards/${id}`);
+        } else {
+          console.error("Failed to create comment");
+        }
+      } catch (error) {
+        console.error("Error creating comment:", error);
+      }
+    },
+    [id]
+  );
+
+  const editComment = useCallback(
+    async (listId: string, cardId: string, commentId: string, text: string) => {
+      try {
+        const response = await fetch(
+          `/api/boards/${id}/lists/${listId}/cards/${cardId}/comments/${commentId}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ text }),
+          }
+        );
+
+        if (response.ok) {
+          console.log("Comment edited successfully");
+          // Trigger a revalidation of the data
+          mutate(`/api/boards/${id}`);
+        } else {
+          console.error("Failed to edit comment");
+        }
+      } catch (error) {
+        console.error("Error editing comment:", error);
+      }
+    },
+    [id]
+  );
+
+  const deleteComment = useCallback(
+    async (listId: string, cardId: string, commentId: string) => {
+      try {
+        const response = await fetch(
+          `/api/boards/${id}/lists/${listId}/cards/${cardId}/comments/${commentId}`,
+          {
+            method: "DELETE",
+          }
+        );
+
+        if (response.ok) {
+          console.log("Comment deleted successfully");
+          // Trigger a revalidation of the data
+          mutate(`/api/boards/${id}`);
+        } else {
+          console.error("Failed to delete comment");
+        }
+      } catch (error) {
+        console.error("Error deleting comment:", error);
+      }
+    },
+    [id]
+  );
+
+  const uploadCardFiles = useCallback(
+    async (listId: string, cardId: string, files: FileList) => {
+      try {
+        const formData = new FormData();
+        for (let i = 0; i < files.length; i++) {
+          formData.append("files", files[i]);
+        }
+        const response = await fetch(
+          `/api/boards/${id}/lists/${listId}/cards/${cardId}/attachments`,
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+
+        if (response.ok) {
+          console.log("Files uploaded successfully");
+          // Trigger a revalidation of the data
+          mutate(`/api/boards/${id}`);
+        } else {
+          console.error("Failed to upload files");
+        }
+      } catch (error) {
+        console.error("Error uploading files:", error);
+      }
+    },
+    [id]
+  );
+
+  const deleteCardFiles = useCallback(
+    async (listId: string, cardId: string, attachments: string[]) => {
+      try {
+        const response = await fetch(
+          `/api/boards/${id}/lists/${listId}/cards/${cardId}/attachments`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ attachments }),
+          }
+        );
+
+        if (response.ok) {
+          console.log("Files deleted successfully");
+          // Trigger a revalidation of the data
+          mutate(`/api/boards/${id}`);
+        } else {
+          console.error("Failed to delete files");
+        }
+      } catch (error) {
+        console.error("Error deleting files:", error);
+      }
+    },
+    [id]
+  );
+
+  const listProps = {
+    deleteList,
+    editList,
+    editCard,
+    deleteCard,
+    createCard,
+    onDrop: switchCardFromListToList,
+    isBoardCreator: isBoardCreator ?? false,
+    createComment,
+    editComment,
+    deleteComment,
+    uploadCardFiles,
+    deleteCardFiles,
+  };
+
   return (
     <div className="container mx-auto p-2 pt-8">
       <h1 className="text-3xl font-semibold mb-4">{boardData?.name}</h1>
@@ -112,20 +391,24 @@ const BoardPage = () => {
         </Link>
       </div>
       <div className="flex space-x-4 mt-6">
-        {boardData && <AddListModal createList={createList} />}
-      </div>
-      <div className="flex flex-col md:flex-row md:flex-wrap gap-8 mt-4 w-full">
-        {boardData?.lists?.map((list) => (
-          <List
-            key={list.id}
-            {...list}
-            deleteList={deleteList}
-            editList={editList}
+        {boardData && (
+          <AddListModal
+            createList={createList}
             isBoardCreator={isBoardCreator || false}
           />
-        ))}
-        <CardDetailsModal />
+        )}
       </div>
+      <DndProvider backend={HTML5Backend}>
+        <div className="flex flex-col md:flex-row md:flex-wrap gap-8 mt-4 w-full">
+          {boardData?.lists?.map((list) => (
+            <List
+              key={`list-${list.boardId}:${list.id}`}
+              {...list}
+              {...listProps}
+            />
+          ))}
+        </div>
+      </DndProvider>
     </div>
   );
 };

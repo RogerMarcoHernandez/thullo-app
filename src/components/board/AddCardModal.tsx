@@ -11,20 +11,21 @@ import {
 import { useRef, useState } from "react";
 
 type Props = {
-  createList: (name: string) => Promise<void>;
+  createCard: (listId: string, title: string) => Promise<void>;
+  listId: string;
   isBoardCreator: boolean;
 };
 
-const AddListModal = ({ createList, isBoardCreator }: Props) => {
+const AddCardModal = ({ listId, createCard, isBoardCreator }: Props) => {
   const [isModalOpen, setModalOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const openModal = () => setModalOpen(true);
   const closeModal = () => setModalOpen(false);
 
-  const handleCreateList = () => {
+  const handleCreateCard = () => {
     if (!inputRef.current || !inputRef.current.value) return;
-    createList(inputRef.current.value).then(() => {
+    createCard(listId, inputRef.current.value).then(() => {
       closeModal();
     });
   };
@@ -32,19 +33,19 @@ const AddListModal = ({ createList, isBoardCreator }: Props) => {
   return (
     <>
       {isBoardCreator && (
-        <Button color="primary" onClick={openModal}>
-          Create List
+        <Button color="success" onClick={openModal}>
+          Add Card
         </Button>
       )}
 
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         <ModalContent>
-          <ModalHeader>Create a New List</ModalHeader>
+          <ModalHeader>Create a New Card</ModalHeader>
           <ModalBody>
-            <Input type="text" placeholder="List Name" ref={inputRef} />
+            <Input type="text" placeholder="Card Name" ref={inputRef} />
           </ModalBody>
           <ModalFooter>
-            <Button color="success" onClick={handleCreateList}>
+            <Button color="success" onClick={handleCreateCard}>
               Create
             </Button>
             <Button color="danger" onClick={closeModal}>
@@ -57,4 +58,4 @@ const AddListModal = ({ createList, isBoardCreator }: Props) => {
   );
 };
 
-export default AddListModal;
+export default AddCardModal;

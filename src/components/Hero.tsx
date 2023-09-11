@@ -1,4 +1,5 @@
 import { Button } from "@nextui-org/button";
+import Link from "next/link";
 
 const Hero = () => (
   <section className="bg-cover bg-center h-screen flex items-center">
@@ -8,7 +9,7 @@ const Hero = () => (
         Organize tasks, collaborate seamlessly, and boost productivity.
       </p>
       <div className="mt-6">
-        <Button size="lg" color="primary">
+        <Button size="lg" color="primary" as={Link} href="/dashboard">
           Get Started
         </Button>
         <Button size="lg" color="secondary" className="ml-4">

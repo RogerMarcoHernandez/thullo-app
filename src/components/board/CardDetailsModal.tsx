@@ -1,8 +1,5 @@
-import { Avatar } from "@nextui-org/avatar";
 import { Button } from "@nextui-org/button";
-import { Chip } from "@nextui-org/chip";
 import { Divider } from "@nextui-org/divider";
-import { Link } from "@nextui-org/link";
 import {
   Modal,
   ModalBody,
@@ -10,7 +7,7 @@ import {
   ModalFooter,
   ModalHeader,
 } from "@nextui-org/modal";
-import NextLink from "next/link";
+import { Card } from "@prisma/client";
 
 const card = {
   title: "Sample Card",
@@ -34,46 +31,54 @@ const card = {
   links: [{ name: "Example Link", url: "https://example.com" }],
 };
 
-const CardDetailsModal = () => (
-  <Modal isOpen={false}>
-    <ModalContent className="container mx-auto">
-      <ModalHeader>
-        <h1 className="text-3xl font-semibold mb-4">{card.title}</h1>
-      </ModalHeader>
-      <ModalBody>
-        <h2>{card.description}</h2>
-        <Divider />
-        <div className="mb-4">
-          <Chip color="warning">{card.dueDate}</Chip>
-          <span className="ml-2">Due Date</span>
-        </div>
-        <div className="mb-4">
-          <span>Assigned Members:</span>
-          <div className="flex flex-col gap-2">
-            {card.assignedMembers.map((member, index) => (
-              <div key={index}>
-                <Avatar src={member.avatarUrl} size="md" />
-                <p className="text-sm">{member.name}</p>
-              </div>
-            ))}
+type Props = {
+  card: Card;
+  isBoardCreator: boolean;
+};
+
+const CardDetailsModal = ({ card, isBoardCreator }: Props) => (
+  <>
+    {isBoardCreator && <Button size="sm">Add</Button>}
+
+    <Modal isOpen={false}>
+      <ModalContent className="container mx-auto">
+        <ModalHeader>
+          <h1 className="text-3xl font-semibold mb-4">{card.title}</h1>
+        </ModalHeader>
+        <ModalBody>
+          <h2>{card.description}</h2>
+          <Divider />
+          <div className="mb-4">
+            {/* <Chip color="warning">{card.dueDate || ""}</Chip> */}
+            <span className="ml-2">Due Date</span>
           </div>
-        </div>
-        <Divider />
-        <div className="mb-4">
-          <h2 className="text-xl mb-2">Comments</h2>
-          <ul>
+          <div className="mb-4">
+            <span>Assigned Members:</span>
+            {/* <div className="flex flex-col gap-2">
+            {card.memberIDs.map((member, index) => (
+              // <div key={index}>
+              //   <Avatar src={member ||""} size="md" />
+              //   <p className="text-sm">{member.name}</p>
+              // </div>
+            ))}
+          </div> */}
+          </div>
+          <Divider />
+          <div className="mb-4">
+            <h2 className="text-xl mb-2">Comments</h2>
+            {/* <ul>
             {card.comments.map((comment, index) => (
               <li key={index} className="mb-2">
                 <p className="font-semibold">{comment.author}</p>
                 <p>{comment.text}</p>
               </li>
             ))}
-          </ul>
-        </div>
-        <Divider />
-        <div className="mb-4">
-          <h2 className="text-xl mb-2">Files</h2>
-          <ul>
+          </ul> */}
+          </div>
+          <Divider />
+          <div className="mb-4">
+            <h2 className="text-xl mb-2">Files</h2>
+            {/* <ul>
             {card.files.map((file, index) => (
               <li key={index} className="mb-2">
                 <Link
@@ -86,12 +91,12 @@ const CardDetailsModal = () => (
                 </Link>
               </li>
             ))}
-          </ul>
-        </div>
-        <Divider />
-        <div className="mb-4">
-          <h2 className="text-xl mb-2">Links</h2>
-          <ul>
+          </ul> */}
+          </div>
+          <Divider />
+          <div className="mb-4">
+            <h2 className="text-xl mb-2">Links</h2>
+            {/* <ul>
             {card.links.map((link, index) => (
               <li key={index} className="mb-2">
                 <Link
@@ -104,19 +109,20 @@ const CardDetailsModal = () => (
                 </Link>
               </li>
             ))}
-          </ul>
-        </div>
-      </ModalBody>
-      <ModalFooter>
-        <Button color="primary" size="sm">
-          Edit Card
-        </Button>
-        <Button color="danger" size="sm">
-          Delete Card
-        </Button>
-      </ModalFooter>
-    </ModalContent>
-  </Modal>
+          </ul> */}
+          </div>
+        </ModalBody>
+        <ModalFooter>
+          <Button color="primary" size="sm">
+            Edit Card
+          </Button>
+          <Button color="danger" size="sm">
+            Delete Card
+          </Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+  </>
 );
 
 export default CardDetailsModal;

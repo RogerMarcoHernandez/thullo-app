@@ -48,7 +48,7 @@ const DashboardPage = () => {
             <p>Loading...</p>
           ) : (
             userBoards.map((board: Board) => (
-              <Card key={board.id}>
+              <Card key={`user-boards-${board.id}`}>
                 <CardBody>
                   <div className="flex justify-between">
                     <h3 className="text-lg font-semibold">{board.name}</h3>
