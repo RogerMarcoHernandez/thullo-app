@@ -16,7 +16,13 @@ const handler = async (
   switch (req.method) {
     case "GET": {
       const boards = await prisma.board.findUnique({
-        where: { id: params.id, userId: session.user.id },
+        where: {
+          id: params.id,
+          OR: [
+            { userId: session.user.id },
+            { members: { some: { id: session.user.id } } },
+          ],
+        },
         include: {
           lists: {
             include: {

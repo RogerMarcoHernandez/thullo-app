@@ -32,9 +32,11 @@ const AddCardModal = ({ listId, createCard, isBoardCreator }: Props) => {
 
   return (
     <>
-      <Button color="success" onClick={openModal}>
-        Add Card
-      </Button>
+      {isBoardCreator && (
+        <Button color="success" onClick={openModal}>
+          Add Card
+        </Button>
+      )}
 
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         <ModalContent>

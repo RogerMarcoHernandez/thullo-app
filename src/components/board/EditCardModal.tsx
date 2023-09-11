@@ -17,7 +17,7 @@ import { getDownloadURL, ref } from "firebase/storage";
 import { useSession } from "next-auth/react";
 import NextLink from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { FaComment, FaPen, FaSave } from "react-icons/fa";
+import { FaComment, FaEye, FaPen, FaSave } from "react-icons/fa";
 import { FaDeleteLeft } from "react-icons/fa6";
 import { MdOutlineCancel } from "react-icons/md";
 import { Props as ListProps } from "./List";
@@ -169,47 +169,53 @@ const EditCardModal = ({
 
   return (
     <>
-      {isBoardCreator && (
-        <Button onClick={openModal} size="sm">
-          <FaPen />
-        </Button>
-      )}
+      <Button
+        onClick={openModal}
+        size="sm"
+        isIconOnly
+        endContent={isBoardCreator ? <FaPen /> : <FaEye />}
+      />
 
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         <ModalContent>
           <ModalHeader>Edit {card.title}</ModalHeader>
           <ModalBody className="flex flex-col gap-4">
             <Input
+              isReadOnly={!isBoardCreator}
               type="text"
               placeholder="Card Name"
               ref={inputRef}
               defaultValue={card.title}
             />
             <Textarea
+              isReadOnly={!isBoardCreator}
               ref={textareaRef}
               placeholder="Description"
               defaultValue={card.description || ""}
             />
-            <Input
-              type="text"
-              placeholder="New label name"
-              ref={newLabelInputRef}
-              endContent={
-                <Button
-                  onClick={() => {
-                    if (!newLabelInputRef.current?.value) return;
-                    setLabels([...labels, newLabelInputRef.current.value]);
-                    newLabelInputRef.current.value = "";
-                  }}
-                  color="primary"
-                  isIconOnly
-                  size="sm"
-                >
-                  <FaSave />
-                </Button>
-              }
-            />
+            {isBoardCreator && (
+              <Input
+                type="text"
+                placeholder="New label name"
+                ref={newLabelInputRef}
+                endContent={
+                  <Button
+                    onClick={() => {
+                      if (!newLabelInputRef.current?.value) return;
+                      setLabels([...labels, newLabelInputRef.current.value]);
+                      newLabelInputRef.current.value = "";
+                    }}
+                    color="primary"
+                    isIconOnly
+                    size="sm"
+                  >
+                    <FaSave />
+                  </Button>
+                }
+              />
+            )}
             <Select
+              isDisabled={!isBoardCreator}
               selectionMode="multiple"
               selectedKeys={selectedLabels}
               items={labels}
@@ -224,23 +230,25 @@ const EditCardModal = ({
                 </SelectItem>
               ))}
             </Select>
-            <Input
-              type="file"
-              variant="underlined"
-              multiple
-              placeholder="Upload files"
-              ref={fileInputRef}
-              endContent={
-                <Button
-                  onClick={handleUploadFiles}
-                  color="primary"
-                  isIconOnly
-                  size="sm"
-                >
-                  <FaSave />
-                </Button>
-              }
-            />
+            {isBoardCreator && (
+              <Input
+                type="file"
+                variant="underlined"
+                multiple
+                placeholder="Upload files"
+                ref={fileInputRef}
+                endContent={
+                  <Button
+                    onClick={handleUploadFiles}
+                    color="primary"
+                    isIconOnly
+                    size="sm"
+                  >
+                    <FaSave />
+                  </Button>
+                }
+              />
+            )}
             <div className="flex flex-col gap-2">
               {isEditingAttachments ? (
                 <div className="flex justify-between">

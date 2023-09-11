@@ -101,10 +101,7 @@ const EditBoardModal = ({ board }: Props) => {
                 defaultSelectedKeys={board.memberIds}
               >
                 {availableMembers.map((user: User) => (
-                  <SelectItem
-                    key={`available-members:${board.id}:${user.id}`}
-                    value={user.id}
-                  >
+                  <SelectItem key={user.id} value={user.id}>
                     {user.name}
                   </SelectItem>
                 ))}

@@ -391,7 +391,12 @@ const BoardPage = () => {
         </Link>
       </div>
       <div className="flex space-x-4 mt-6">
-        {boardData && <AddListModal createList={createList} />}
+        {boardData && (
+          <AddListModal
+            createList={createList}
+            isBoardCreator={isBoardCreator || false}
+          />
+        )}
       </div>
       <DndProvider backend={HTML5Backend}>
         <div className="flex flex-col md:flex-row md:flex-wrap gap-8 mt-4 w-full">

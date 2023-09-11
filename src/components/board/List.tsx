@@ -118,9 +118,11 @@ const List = ({
               isBoardCreator={isBoardCreator}
             />
           </div>
-          <Button color="danger" onClick={() => deleteList(list.id)}>
-            Delete list
-          </Button>
+          {isBoardCreator && (
+            <Button color="danger" onClick={() => deleteList(list.id)}>
+              Delete list
+            </Button>
+          )}
         </CardHeader>
         <CardBody>
           {list.cards?.map((card, index) => (

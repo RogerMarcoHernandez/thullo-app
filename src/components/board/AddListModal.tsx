@@ -12,9 +12,10 @@ import { useRef, useState } from "react";
 
 type Props = {
   createList: (name: string) => Promise<void>;
+  isBoardCreator: boolean;
 };
 
-const AddListModal = ({ createList }: Props) => {
+const AddListModal = ({ createList, isBoardCreator }: Props) => {
   const [isModalOpen, setModalOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -30,9 +31,11 @@ const AddListModal = ({ createList }: Props) => {
 
   return (
     <>
-      <Button color="primary" onClick={openModal}>
-        Create List
-      </Button>
+      {isBoardCreator && (
+        <Button color="primary" onClick={openModal}>
+          Create List
+        </Button>
+      )}
 
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         <ModalContent>
